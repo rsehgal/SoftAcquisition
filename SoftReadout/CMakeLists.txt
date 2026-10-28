@@ -12,10 +12,12 @@ if(SRC_FILES)
     # If .cpp files exist in src/, compile them into a static library
     add_library(SoftReadout_Core ${SRC_FILES})
     target_include_directories(SoftReadout_Core PUBLIC include)
+    target_link_libraries(SoftReadout_Core PUBLIC SoftSiPM_Core)
 else()
     # If src/ is currently empty, use an INTERFACE library for headers only
     add_library(SoftReadout_Core INTERFACE)
     target_include_directories(SoftReadout_Core INTERFACE include)
+    target_link_libraries(SoftReadout_Core INTERFACE SoftSiPM_Core)
 endif()
 
 option(ROOT "Enable ROOT" ON)
