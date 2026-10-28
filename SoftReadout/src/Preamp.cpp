@@ -6,12 +6,24 @@
 #include <iostream>
 #include "Preamp.h"
 #include "Config.h"
-
+#include "globals.h"
 Preamp::Preamp() {}
 
 Preamp::Preamp(const Config &cfg) : preampCfg(cfg)
 {
+
+  /*for (unsigned int i = 0; i < 600; i++) {
+    timeVec.push_back(i);
+  }*/
+
+  SetTimeAxis(0,500);
   UpdateGain();
+}
+
+void Preamp::SetTimeAxis(double tFirst, double tLast, double dt )
+{
+  timeVec.clear();
+  for (double t = tFirst - 500.; t < tLast + 250. + 6*87.5 ; t += dt) timeVec.push_back(t);
 }
 
 void Preamp::UpdateGain()
@@ -47,6 +59,18 @@ void Preamp::SetGainType(GainType gt)
 {
   preampCfg.gType = gt;
   UpdateGain();
+}
+
+std::vector<double> Preamp::Waveform(const Avalanche av)
+{
+  std::vector<double> q(timeVec.size(), 0.);
+
+  for (unsigned int i = 0; i < timeVec.size(); i++) {
+    if (av.arrivalTime < timeVec[i]) {
+      q[i] = gainFactor * av.charge * (1 - std::exp(-(timeVec[i] - av.arrivalTime) / kTauRecharge));
+    }
+  }
+  return q;
 }
 
 void Preamp::Print() const

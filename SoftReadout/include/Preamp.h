@@ -6,6 +6,8 @@
 #ifndef Preamp_h
 #define Preamp_h
 
+#include "globals.h"
+
 class Preamp {
 
 public:
@@ -18,6 +20,7 @@ public:
 
   double Process(double charge);
 
+  void SetTimeAxis(double tFirst, double tLast, double dt = 0.5);
   void SetFCIndex(unsigned short fcIn);
   void SetGainType(GainType gt);
   
@@ -27,10 +30,12 @@ public:
 
   void UpdateGain();
   void Print() const;
+  std::vector<double> Waveform(const Avalanche av) ;
 
 private:
   Config preampCfg;
   double gainFactor;
+  std::vector<double> timeVec;
 };
 
 #endif
