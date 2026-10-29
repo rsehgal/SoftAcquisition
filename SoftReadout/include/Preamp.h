@@ -31,9 +31,10 @@ public:
   void UpdateGain();
   void Print() const;
   std::vector<double> Waveform(const Avalanche av) ;
+  std::vector<double> Waveform(const std::vector<Avalanche> avVec) ;
 
   std::vector<double> GetTimeVec () const {return timeVec;}
-
+  
 private:
   Config preampCfg;
   double gainFactor;

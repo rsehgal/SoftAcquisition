@@ -16,14 +16,15 @@ Preamp::Preamp(const Config &cfg) : preampCfg(cfg)
     timeVec.push_back(i);
   }*/
 
-  SetTimeAxis(0,500);
+  SetTimeAxis(0, 500);
   UpdateGain();
 }
 
-void Preamp::SetTimeAxis(double tFirst, double tLast, double dt )
+void Preamp::SetTimeAxis(double tFirst, double tLast, double dt)
 {
   timeVec.clear();
-  for (double t = tFirst - 500.; t < tLast + 250. + 6*87.5 ; t += dt) timeVec.push_back(t);
+  for (double t = tFirst - 500.; t < tLast + 250. + 6 * 87.5; t += dt)
+    timeVec.push_back(t);
 }
 
 void Preamp::UpdateGain()
@@ -71,6 +72,18 @@ std::vector<double> Preamp::Waveform(const Avalanche av)
     }
   }
   return q;
+}
+
+std::vector<double> Preamp::Waveform(const std::vector<Avalanche> avVec)
+{
+  std::vector<double> resVec(timeVec.size(), 0.);
+  for (const auto &av : avVec) {
+    std::vector<double> qVec = Waveform(av);
+    for (unsigned int i = 0; i < qVec.size(); i++) {
+      resVec[i] += qVec[i];
+    }
+  }
+  return resVec;
 }
 
 void Preamp::Print() const
