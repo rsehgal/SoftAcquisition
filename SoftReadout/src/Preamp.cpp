@@ -27,6 +27,10 @@ void Preamp::SetTimeAxis(double tFirst, double tLast, double dt)
     timeVec.push_back(t);
 }
 
+void Preamp::SetGainFactor(double gf){
+  gainFactor = gf;
+}
+
 void Preamp::UpdateGain()
 {
   if (preampCfg.fCIndex == 0) preampCfg.fCIndex = 1;

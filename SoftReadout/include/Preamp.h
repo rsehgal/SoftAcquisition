@@ -23,7 +23,7 @@ public:
   void SetTimeAxis(double tFirst, double tLast, double dt = 0.5);
   void SetFCIndex(unsigned short fcIn);
   void SetGainType(GainType gt);
-  
+  void SetGainFactor(double gf);  
   Preamp();
   ~Preamp();
   Preamp(const Config &cfg);
