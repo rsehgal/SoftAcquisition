@@ -11,7 +11,7 @@
 #include "TApplication.h"
 #include "SlowShaper.h"
 #include "TCanvas.h"
-
+#include "ReadoutHelpers.h"
 int main(int argc, char *argv[])
 {
   TApplication *fApp = new TApplication("fApp", NULL, NULL);
@@ -41,6 +41,12 @@ int main(int argc, char *argv[])
   grSh->SetLineColor(2);
   grSh->Draw("same");
 
+
+  double tp;
+  double pk = MaxOf(out, timeVec, tp);
+  std::printf("\n---- single avalanche ----\npreamp plateau %.2f\nshaper peak %.2f at t = %.1f ns (%.1f ns after the avalanche)\n"
+              "ratio peak/plateau = %.4f   (expected 0.658 for 50 ns, n = 2)\n",
+              waveform.back(), pk, tp, tp - av.arrivalTime, pk / waveform.back());
   /*
   std::vector<TGraph *> vecOfGr;
   for (unsigned int i = 1; i < 5; i++) {
