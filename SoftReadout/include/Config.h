@@ -11,4 +11,9 @@ extern double lgCapacitance;
 extern unsigned short fcIndexMax;
 extern double fcStep;
 
+// Slow shaper variable from datasheet
+extern double slowShaperStepNs;
+extern unsigned short slowShaperIndexMax;
+extern unsigned short  slowShaperOrder;
+
 #endif
