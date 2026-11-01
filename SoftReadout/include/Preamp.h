@@ -16,6 +16,7 @@ public:
   struct Config {
     GainType gType         = HIGH_GAIN;
     unsigned short fCIndex = 50;
+    double decayNs = 0.;
   };
 
   double Process(double charge);
@@ -23,7 +24,9 @@ public:
   void SetTimeAxis(double tFirst, double tLast, double dt = 0.5);
   void SetFCIndex(unsigned short fcIn);
   void SetGainType(GainType gt);
-  void SetGainFactor(double gf);  
+  void SetGainFactor(double gf);
+  void SetDecayNs(double tauDecay) { preampCfg.decayNs = tauDecay; }
+  double GetDecayNs() const { return preampCfg.decayNs; }  
   Preamp();
   ~Preamp();
   Preamp(const Config &cfg);

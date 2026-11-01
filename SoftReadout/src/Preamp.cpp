@@ -66,7 +66,7 @@ void Preamp::SetGainType(GainType gt)
   UpdateGain();
 }
 
-std::vector<double> Preamp::Waveform(const Avalanche av)
+/*std::vector<double> Preamp::Waveform(const Avalanche av)
 {
   std::vector<double> q(timeVec.size(), 0.);
 
@@ -77,7 +77,7 @@ std::vector<double> Preamp::Waveform(const Avalanche av)
   }
   return q;
 }
-
+*/
 std::vector<double> Preamp::Waveform(const std::vector<Avalanche> avVec)
 {
   std::vector<double> resVec(timeVec.size(), 0.);
@@ -88,6 +88,29 @@ std::vector<double> Preamp::Waveform(const std::vector<Avalanche> avVec)
     }
   }
   return resVec;
+}
+
+std::vector<double> Preamp::Waveform(const Avalanche av)
+{
+  std::vector<double> q(timeVec.size(), 0.);
+  const double tauF = kTauRecharge;
+  const double tauD = preampCfg.decayNs;
+
+  for (unsigned int i = 0; i < timeVec.size(); i++) {
+    if (av.arrivalTime < timeVec[i]) {
+      double t = timeVec[i] - av.arrivalTime;
+      double shape;
+      if (tauD <= 0.) {
+        shape = 1. - std::exp(-t / tauF);
+      } else if (std::fabs(tauF - tauD) < 1e-6 * tauF) {
+        shape = (t / tauF) * std::exp(-t / tauF);
+      } else {
+        shape = tauD / (tauF - tauD) * (std::exp(-t / tauF) - std::exp(-t / tauD));
+      }
+      q[i] = gainFactor * av.charge * shape;
+    }
+  }
+  return q;
 }
 
 void Preamp::Print() const
