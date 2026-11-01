@@ -27,6 +27,14 @@ public:
     }
   };
 
+  struct Result{
+    double tTrig=0.;
+    double tHold=0.;
+    double vHold=0.;
+    bool truncated=false;
+  };
+
+
   void Reset();
 
   PeakDetector();
@@ -34,7 +42,9 @@ public:
 
   void Print() const;
 
+  bool Process(double tSample, double vSample, bool trigger, Result& res);
 private:
   Config cfg;
+  State state = State::OFF;
 };
 #endif
