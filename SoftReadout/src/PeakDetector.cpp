@@ -5,17 +5,23 @@
 */
 #include "PeakDetector.h"
 #include <iostream>
-
-PeakDetector::PeakDetector() { state = State::OFF; }
+#include <stdexcept>
+PeakDetector::PeakDetector()
+{
+  state = State::OFF;
+}
 
 PeakDetector::PeakDetector(const Config &c) : cfg(c), state(State::OFF) {}
 
-void PeakDetector::Print() const { cfg.Print(); }
+void PeakDetector::Print() const
+{
+  cfg.Print();
+}
 
 void PeakDetector::Reset() {}
 
-bool PeakDetector::Process(double tSample, double vSample, bool trigger,
-                           Result &res) {
+bool PeakDetector::Process(double tSample, double vSample, bool trigger, Result &res)
+{
   /*Algo :
   Check the state
     if state is OFF then sample should be ignore until or unless it is a trigger
@@ -25,7 +31,7 @@ bool PeakDetector::Process(double tSample, double vSample, bool trigger,
   */
   if (state == State::OFF) {
     if (trigger) {
-      state = State::SENSING;
+      state     = State::SENSING;
       res.tTrig = tSample;
       res.tHold = tSample + cfg.holdDelayNs;
       res.vHold = vSample;
@@ -36,8 +42,7 @@ bool PeakDetector::Process(double tSample, double vSample, bool trigger,
   }
   if (state == State::SENSING) {
     if (tSample < res.tHold) {
-      if (res.vHold < vSample)
-        res.vHold = vSample;
+      if (res.vHold < vSample) res.vHold = vSample;
     } else {
       state = State::HOLD;
       return true;
@@ -55,4 +60,19 @@ bool PeakDetector::Process(double tSample, double vSample, bool trigger,
   return false;
 }
 
+std::vector<PeakDetector::Result> PeakDetector::Process(const std::vector<double> &tVec,
+                                                        const std::vector<double> &vVec, const std::vector<bool> trVec)
+{
+  if (tVec.size() != vVec.size() || tVec.size() != trVec.size())
+    throw std::invalid_argument("PeakDetector::Process : tVec, vVec and trVec should be of same size...");
 
+  std::vector<Result> resVec;
+  Result current;
+  for (size_t i = 0; i < tVec.size(); i++) {
+    if (Process(tVec[i], vVec[i], trVec[i], current)) {
+      resVec.push_back(current);
+    }
+  }
+
+  return resVec;
+}
